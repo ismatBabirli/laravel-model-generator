@@ -1,7 +1,7 @@
 {
     "name": "ismatbabirli/laravel-model-generator",
     "description": "Laravel Model Generator",
-    "version": "3.0.0",
+    "version": "10.0.0",
     "license": "MIT",
     "autoload": {
         "psr-4": {
