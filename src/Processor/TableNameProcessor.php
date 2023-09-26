@@ -19,14 +19,23 @@ class TableNameProcessor implements ProcessorInterface
 
     public function process(EloquentModel $model, Config $config): void
     {
+		$plural = true;
+		
         $className = $config->getClassName();
         $baseClassName = $config->getBaseClassName();
-        $tableName = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className);
+        $tableName = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className, $plural);
 
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
         $prefixedTableName = Prefix::add($tableName);
         if (!$schemaManager->tablesExist($prefixedTableName)) {
-            throw new GeneratorException(sprintf('Table %s does not exist', $prefixedTableName));
+			$plural = false;
+			
+			$tableName = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className, $plural);
+			$prefixedTableName = Prefix::add($tableName);
+			
+			if (!$schemaManager->tablesExist($prefixedTableName)) {
+				throw new GeneratorException(sprintf('Table %s does not exist', $prefixedTableName));
+			}
         }
 
         $model
@@ -34,7 +43,7 @@ class TableNameProcessor implements ProcessorInterface
             ->addUses(new UseClassModel(ltrim($baseClassName, '\\')))
             ->setTableName($tableName);
 
-        if ($model->getTableName() !== EmgHelper::getTableNameByClassName($className)) {
+        if ($model->getTableName() !== EmgHelper::getTableNameByClassName($className, $plural)) {
             $property = new PropertyModel('table', 'protected', $model->getTableName());
             $property->setDocBlock(new DocBlockModel('The table associated with the model.', '', '@var string'));
             $model->addProperty($property);
