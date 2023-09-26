@@ -19,8 +19,8 @@ class TableNameProcessor implements ProcessorInterface
 
     public function process(EloquentModel $model, Config $config): void
     {
-		$plural = true;
-		
+        $plural = true;
+        
         $className = $config->getClassName();
         $baseClassName = $config->getBaseClassName();
         $tableName = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className, $plural);
@@ -28,14 +28,14 @@ class TableNameProcessor implements ProcessorInterface
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
         $prefixedTableName = Prefix::add($tableName);
         if (!$schemaManager->tablesExist($prefixedTableName)) {
-			$plural = false;
-			
-			$tableName = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className, $plural);
-			$prefixedTableName = Prefix::add($tableName);
-			
-			if (!$schemaManager->tablesExist($prefixedTableName)) {
-				throw new GeneratorException(sprintf('Table %s does not exist', $prefixedTableName));
-			}
+            $plural = false;
+            
+            $tableName = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className, $plural);
+            $prefixedTableName = Prefix::add($tableName);
+            
+            if (!$schemaManager->tablesExist($prefixedTableName)) {
+                throw new GeneratorException(sprintf('Table %s does not exist', $prefixedTableName));
+            }
         }
 
         $model
