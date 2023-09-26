@@ -16,9 +16,13 @@ class EmgHelper
         return end($pieces);
     }
 
-    public static function getTableNameByClassName(string $className): string
+    public static function getTableNameByClassName(string $className, bool $plural = true): string
     {
-        return Str::plural(Str::snake($className));
+        if ($plural) {
+            return Str::plural(Str::snake($className));
+        } else {
+            return Str::singular(Str::snake($className));
+        }
     }
 
     public static function getClassNameByTableName(string $tableName): string
